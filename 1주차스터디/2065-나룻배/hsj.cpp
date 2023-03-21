@@ -24,8 +24,8 @@ int main() {
 
 	while (!l.empty() || !r.empty()) {
 		int countPerson = 0;
-		if (ship) { //¿ŞÂÊ
-			if (l.empty()) { //ÇöÀç Å¥¿¡ »ç¶÷ÀÌ ¾ø´Ù. 
+		if (ship) { //ì™¼ìª½
+			if (l.empty()) { //í˜„ì¬ íì— ì‚¬ëŒì´ ì—†ë‹¤. 
 				// 40 7 4750
 				ship = (!ship);
 				if (!r.empty()) {
@@ -34,8 +34,8 @@ int main() {
 				}
 				
 			}
-			else if (l.front() <= curTime) { //ÅÂ¿ï »ç¶÷ÀÌ ÀÖ¾î
-				//ÅÂ¿ì°í
+			else if (l.front() <= curTime) { //íƒœìš¸ ì‚¬ëŒì´ ìˆì–´
+				//íƒœìš°ê³ 
 				while ((l.front() <= curTime) && countPerson < m) {
 					countPerson++;
 					l.pop();
@@ -43,31 +43,31 @@ int main() {
 						break;
 					}
 				}
-				//ÀÌµ¿ÇÏ°í
+				//ì´ë™í•˜ê³ 
 				curTime += t;
-				//³»¸°´Ù
+				//ë‚´ë¦°ë‹¤
 				for (int i = 0; i < countPerson; i++) {
 					cout << curTime << "\n";
 				}
 				ship = (!ship);
 			}
-			else { // ÅÂ¿ï »ç¶÷ÀÌ ¾ø´Ù. > ½Ã°£ÀÌ ¾È ¸Â¾Æ¼­
+			else { // íƒœìš¸ ì‚¬ëŒì´ ì—†ë‹¤. > ì‹œê°„ì´ ì•ˆ ë§ì•„ì„œ
 				if (r.empty()) {
 					curTime = l.front();
 					continue;
 				}
-				if (r.front() < l.front()) { // ¹İ´ëÂÊÀÌ ´õ ºü¸£´Ù.
+				if (r.front() < l.front()) { // ë°˜ëŒ€ìª½ì´ ë” ë¹ ë¥´ë‹¤.
 					ship = (!ship);
 					curTime = r.front();
 					curTime += t;
 				}
-				else { //ÇöÀç ½Ã°£ÀÌ ´õ ºü¸£´Ù.
+				else { //í˜„ì¬ ì‹œê°„ì´ ë” ë¹ ë¥´ë‹¤.
 					curTime = l.front();
 				}
 			}
 		}
 		else {
-			if (r.empty()) { //ÇöÀç Å¥¿¡ »ç¶÷ÀÌ ¾ø´Ù. 
+			if (r.empty()) { //í˜„ì¬ íì— ì‚¬ëŒì´ ì—†ë‹¤. 
 				ship = (!ship);
 				curTime += t;
 				if (!l.empty()) {
@@ -75,8 +75,8 @@ int main() {
 					curTime += t;
 				}
 			}
-			else if (r.front() <= curTime) { //ÅÂ¿ï »ç¶÷ÀÌ ÀÖ¾î
-				//ÅÂ¿ì°í
+			else if (r.front() <= curTime) { //íƒœìš¸ ì‚¬ëŒì´ ìˆì–´
+				//íƒœìš°ê³ 
 				while ((r.front() <= curTime) && countPerson < m) {
 					countPerson++;
 					r.pop();
@@ -84,24 +84,24 @@ int main() {
 						break;
 					}
 				}
-				//ÀÌµ¿ÇÏ°í
+				//ì´ë™í•˜ê³ 
 				curTime += t;
-				//³»¸°´Ù
+				//ë‚´ë¦°ë‹¤
 				for (int i = 0; i < countPerson; i++) {
 					cout << curTime << "\n";
 				}
 				ship = (!ship);
 			}
-			else { // ÅÂ¿ï »ç¶÷ÀÌ ¾ø´Ù. > ½Ã°£ÀÌ ¾È ¸Â¾Æ¼­
+			else { // íƒœìš¸ ì‚¬ëŒì´ ì—†ë‹¤. > ì‹œê°„ì´ ì•ˆ ë§ì•„ì„œ
 				if (l.empty()) {
 					curTime = r.front();
 					continue;
 				}
-				if (l.front() < r.front()) { // ¹İ´ëÂÊÀÌ ´õ ºü¸£´Ù.
+				if (l.front() < r.front()) { // ë°˜ëŒ€ìª½ì´ ë” ë¹ ë¥´ë‹¤.
 					ship = (!ship);
 					curTime += t;
 				}
-				else { //ÇöÀç ½Ã°£ÀÌ ´õ ºü¸£´Ù.
+				else { //í˜„ì¬ ì‹œê°„ì´ ë” ë¹ ë¥´ë‹¤.
 					curTime = r.front();
 				}
 			}
