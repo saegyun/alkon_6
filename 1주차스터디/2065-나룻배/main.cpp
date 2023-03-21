@@ -13,18 +13,18 @@
 
 using namespace std;
 
-int n, m, t, p1 = 0, p2 = 0, current = 0;
-bool isStart = 0;
+int n, m, t, current = 0, amount = 0;
 
+bool isStart = 1;
 bool isLeft = 1;
 
-ll total = 0;
+vector<pair<int, string>> input_timeline;
+queue<pair<int, string>> boarding_people;
 
-veci la;
-veci ra;
+map<string, int> answer;
 
-map<string, int> mp;
-vector<string> ip;
+queue<int> left_q;
+queue<int> right_q;
 
 int main() {
     fastio;
@@ -34,110 +34,145 @@ int main() {
         int arrival;
         string pos;
         cin >> arrival >> pos;
-        if (pos == "left") {
-            la.push_back(arrival);
-        }
-        if (pos == "right") {
-            ra.push_back(arrival);
-        }
-        ip.push_back(to_string(arrival) + pos);
+        input_timeline.push_back({ arrival, pos });
     }
-    sort(allV(la));
-    sort(allV(ra));
 
-    la.push_back(INF);
-    ra.push_back(INF);
+    sort(allV(input_timeline));
 
-    vector<string> v;
+    for (pair<int, string> p : input_timeline) {
+        if (p.ss == "left") {
+            left_q.push(p.ff);
+        }
+        else {
+            right_q.push(p.ff);
+        }
+    }
+
+    
 
     while (1) {
-        //cout << "status - r: " << ra[p2] << " at " << p2 << "\tl: " << la[p1] << " at " << p1 << "\tisLeft" << isLeft << "\n";
+        if (!isStart) {
+            current += t;
+            //cout << "ferry moved at " << current << "\n";
 
-        if (isStart != 0) {
-            //cout << "at " << total << " across!\n";
-            total += t;
-            for (string str : v) {
-                mp[str] = total;
-            }
             isLeft = !isLeft;
+            amount = 0;
+            while (!boarding_people.empty()) {
+                pair<int, string> person = boarding_people.front();
+                boarding_people.pop();
 
-            current = 0;
+                string key = to_string(person.ff) + "_" + person.ss;
+
+                answer[key] = current;
+            }
         }
-        isStart = 1;
-    
-        v.resize(0);
+        isStart = 0;
 
-        if (la[p1] == INF && ra[p2] == INF) {
+
+        // 종료조건 : 두 땅에 아무도 올 사람이 없을 때
+        if (left_q.empty() && right_q.empty()) {
             break;
         }
 
-        if (isLeft) {
-            while (total >= la[p1]) {
-                //cout << "method 1 " << la[p1] << "-board\n";
-                v.push_back(to_string(la[p1]) + (isLeft ? "left" : "right"));
-                current++;
-                p1++;
-                if (current == m) {
+        if(isLeft) {
+            //cout << "status - boarding_count : " << boarding_people.size() << "\tis left? : " << isLeft << "\n";
+            // 앞으로 올 사람이 없으면 넘기기
+            if (left_q.empty()) {
+                continue;
+            }
+            // 현재 시간에 탈 사람이 있을 경우
+            while (!left_q.empty()) {
+                int arrival_time = left_q.front();
+
+                if (arrival_time <= current) {
+                    //cout << "left : " << arrival_time << " is on board\n";
+                    boarding_people.push({ arrival_time, "left" });
+                    left_q.pop();
+                }
+                else {
+                    break;
+                }
+                if (boarding_people.size() == m) {
                     break;
                 }
             }
-            if (current == m) {
-                continue;
-            }
-            if (current == 0) {
-
-                if (ra[p2] > la[p1]) {
-                    //cout << "method 2 "  << la[p1] << "-board\n";
-                    v.push_back(to_string(la[p1]) + (isLeft ? "left" : "right"));
-
-                    total = la[p1];
-
-                    current++;
-                    p1++;
-
+            // 탈 사람이 없을 경우
+            if (boarding_people.size() == 0) {
+                if (right_q.front() < left_q.front()) {
+                    // 만약 오른쪽에 사람이 먼저 오면 일단 이동
+                    current = right_q.front();
                     continue;
                 }
-                if (ra[p2] != INF) {
-                    total = ra[p2];
+                // 왼쪽에 사람이 먼저 왔으면 그 시간에 온 모든 사람을 최대 수 까지 태움
+                current = left_q.front();
+
+                while (!left_q.empty()) {
+                    int arrival_time = left_q.front();
+
+                    if (arrival_time <= current) {
+                        boarding_people.push({ arrival_time, "left" });
+                        left_q.pop();
+                    }
+                    else {
+                        break;
+                    }
+                    if (boarding_people.size() == m) {
+                        break;
+                    }
                 }
             }
-
         }
         else {
-            while (total >= ra[p2]) {
-                //cout << "method 1 " << ra[p2] << "-board\n";
-                v.push_back(to_string(ra[p2]) + (isLeft ? "left" : "right"));
+            //cout << "status - boarding_count : " << boarding_people.size() << "\tis left? : " << isLeft << "\n";
+            // 앞으로 올 사람이 없으면 넘기기
+            if (right_q.empty()) {
+                continue;
+            }
+            // 현재 시간에 탈 사람이 있을 경우
+            while (!right_q.empty()) {
+                int arrival_time = right_q.front();
 
-                current++;
-                p2++;
-                if (current == m) {
+                if (arrival_time <= current) {
+                    //cout << "right : " << arrival_time << " is on board\n";
+                    boarding_people.push({ arrival_time, "right" });
+                    right_q.pop();
+                }
+                else {
+                    break;
+                }
+                if (boarding_people.size() == m) {
                     break;
                 }
             }
-            if (current == m) {
-                continue;
-            }
-            if (current == 0) {
-                if (ra[p2] < la[p1]) {
-                    //cout << "method 2 " << ra[p2] << "-board\n";
-                    v.push_back(to_string(ra[p2]) + (isLeft ? "left" : "right"));
-
-                    total = ra[p2];
-
-                    current++;
-                    p2++;
+            // 탈 사람이 없을 경우
+            if (boarding_people.size() == 0) {
+                if (right_q.front() > left_q.front()) {
+                    // 만약 왼쪽에 사람이 먼저 오면 일단 이동
+                    current = left_q.front();
                     continue;
                 }
-                if (la[p1] != INF) {
-                    total = la[p1];
+                // 오른쪽에 사람이 먼저 왔으면 그 시간에 온 모든 사람을 최대 수 까지 태움
+                current = right_q.front();
+
+                while (!right_q.empty()) {
+                    int arrival_time = right_q.front();
+
+                    if (arrival_time <= current) {
+                        boarding_people.push({ arrival_time, "right" });
+                        right_q.pop();
+                    }
+                    else {
+                        break;
+                    }
+                    if (boarding_people.size() == m) {
+                        break;
+                    }
                 }
             }
-
         }
     }
-
-    for (string str : ip) {
-        cout << mp[str] << "\n";
+    for (pair<int, string> person : input_timeline) {
+        cout << answer[to_string(person.ff) + "_" + person.ss] << "\n";
     }
 
     return 0;
